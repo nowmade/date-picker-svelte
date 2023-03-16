@@ -88,9 +88,9 @@ If you use [date-fns](https://date-fns.org/), you can create a Locale object by 
 ```js
 <script>
   import { DatePicker, localeFromDateFnsLocale } from 'date-picker-svelte'
-  import { hy } from 'date-fns/locale'
+  import { fr } from 'date-fns/locale'
   let date = new Date()
-  let locale = localeFromDateFnsLocale(hy)
+  let locale = localeFromDateFnsLocale(fr)
 </script>
 
 <DatePicker bind:value={date} {locale} />

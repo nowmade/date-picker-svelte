@@ -106,6 +106,10 @@
   /** Wait with updating the date until a date is selected */
   export let browseWithoutSelecting = false
 
+  export let disableWeekends = false
+  export let disabledDates: Date[] = []
+  export let direction: 'top' | 'bottom' = 'bottom'
+
   // handle on:focusout for parent element. If the parent element loses
   // focus (e.g input element), visible is set to false
   function onFocusOut(e: FocusEvent) {
@@ -153,7 +157,13 @@
     on:input={input}
   />
   {#if visible && !disabled}
-    <div class="picker" class:visible transition:fly={{ duration: 80, easing: cubicInOut, y: -5 }}>
+    <div
+      class="picker"
+      class:visible
+      class:top={direction === 'top'}
+      class:bottom={direction === 'bottom'}
+      transition:fly={{ duration: 80, easing: cubicInOut, y: -5 }}
+    >
       <DateTimePicker
         on:focusout={onFocusOut}
         on:select={onSelect}
@@ -162,6 +172,8 @@
         {max}
         {locale}
         {browseWithoutSelecting}
+        {disableWeekends}
+        {disabledDates}
       />
     </div>
   {/if}
@@ -196,8 +208,13 @@
   .picker
     display: none
     position: absolute
-    margin-top: 1px
     z-index: 10
     &.visible
       display: block
+    &.top
+      bottom: 100%
+      margin-bottom: 1px
+    &.bottom
+      top: 100%
+      margin-top: 1px
 </style>

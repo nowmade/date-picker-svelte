@@ -34,9 +34,10 @@
 
   /** The date shown in the popup when none is selected */
   let browseDate = value ? cloneDate(value) : cloneDate(defaultDate)
-  $: if (browseDate.getTime() !== value?.getTime()) {
-    browseDate = value ? cloneDate(value) : browseDate
-  }
+  // bug ?? empêche le browseWuthoutSelecting de fonctionner
+  // $: if (browseDate.getTime() !== value?.getTime()) {
+  //   browseDate = value ? cloneDate(value) : browseDate
+  // }
 
   /** The earliest year the user can select */
   export let min = new Date(defaultDate.getFullYear() - 20, 0, 1)
@@ -72,6 +73,9 @@
   $: iLocale = getInnerLocale(locale)
   /** Wait with updating the date until a date is selected */
   export let browseWithoutSelecting = false
+
+  export let disableWeekends = false
+  export let disabledDates: Date[] = []
 
   $: browseYear = browseDate.getFullYear()
   function setYear(newYear: number) {
@@ -203,6 +207,15 @@
     }
     e.preventDefault()
   }
+
+  const selectable = (day: CalendarDay) => {
+    const date = new Date(day.year, day.month, day.number)
+    // console.log(date, day, disabledCalendarDays.includes(day), disabledCalendarDays)
+    if (disableWeekends && (date.getDay() === 0 || date.getDay() === 6)) {
+      return false
+    }
+    return dayIsInRange(day, min, max) && !disabledDates.find((d) => d.getTime() === date.getTime())
+  }
 </script>
 
 <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
@@ -296,10 +309,11 @@
       <div class="week">
         {#each calendarDays.slice(weekIndex * 7, weekIndex * 7 + 7) as calendarDay}
           <!-- svelte-ignore a11y-click-events-have-key-events -->
-          <div
+          <button
             class="cell"
             on:click={() => selectDay(calendarDay)}
-            class:disabled={!dayIsInRange(calendarDay, min, max)}
+            disabled={!selectable(calendarDay)}
+            class:disabled={!selectable(calendarDay)}
             class:selected={calendarDay.year === value?.getFullYear() &&
               calendarDay.month === value?.getMonth() &&
               calendarDay.number === value.getDate()}
@@ -309,7 +323,7 @@
             class:other-month={calendarDay.month !== browseMonth}
           >
             <span>{calendarDay.number}</span>
-          </div>
+          </button>
         {/each}
       </div>
     {/each}
@@ -422,6 +436,7 @@
   .week
     display: flex
   .cell
+    background: transparent
     display: flex
     align-items: center
     justify-content: center
@@ -439,12 +454,14 @@
     &:hover
       background-color: rgba(#808080, 0.08)
     &.disabled
-      visibility: hidden
+      opacity: 0.3!important
+      color: inherit!important
+      cursor: not-allowed
     &.disabled:hover
       border: none
       background-color: transparent
-    &.other-month span
-      opacity: 0.4
+    &.other-month
+      opacity: 0.6
     &.selected
       color: var(--date-picker-selected-color, inherit)
       background: var(--date-picker-selected-background, rgba(2, 105, 247, 0.2))

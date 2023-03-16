@@ -6,12 +6,12 @@
 
   // had to import it this way to avoid errors
   // in `npm run build:site` or `npm run check`:
-  import hy from 'date-fns/locale/hy/index.js'
+  import fr from 'date-fns/locale/fr/index.js'
 
   let value: Date
   let min: Date
   let max: Date
-  let locale = localeFromDateFnsLocale(hy)
+  let locale = localeFromDateFnsLocale(fr)
   let browseWithoutSelecting: boolean
 </script>
 
@@ -24,7 +24,7 @@
     <Prop label="value">{value}</Prop>
     <Prop label="min" bind:value={min} />
     <Prop label="max" bind:value={max} />
-    <Prop label="locale">date-fns <code>hy</code></Prop>
+    <Prop label="locale">date-fns <code>fr</code></Prop>
     <Prop label="browseWithoutSelecting" bind:value={browseWithoutSelecting} />
   </div>
 </Split>
